@@ -1,212 +1,407 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Portal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Kerjakini - Temukan Lowongan Kerja Terbaik</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --golden-ratio: 1.618;
+            --primary-color: #6C63FF;
+            --primary-dark: #2E25B4;
+            --secondary-color: #FF6584;
+            --bg-light: #F3F4F6;
+            --white: #ffffff;
+            --text-dark: #1F2937;
+            --text-light: #6B7280;
+            --border-radius: 0.5rem;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: var(--golden-ratio);
         }
-
-        .navbar {
-            background-color: #002f34;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            line-height: 1.2;
         }
-
-        .navbar a {
-            color: white;
-            font-size: 0.9rem;
-            margin-right: 20px;
-            transition: color 0.3s ease;
+        
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
-
-        .navbar a:hover {
-            color: #ff0066;
+        
+        /* Enhanced Navbar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 2rem;
+            background-color: var(--white);
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-
-        .search-section {
-            background-color: #f8f9fa;
-            padding: 30px;
-            border-radius: 10px;
+        
+        .logo {
+            font-size: calc(1rem * var(--golden-ratio));
+            font-weight: 700;
+            color: var(--primary-dark);
+            letter-spacing: -0.5px;
+            padding: 0.5rem 0;
         }
-
-        .search-section .btn {
-            background-color: #ff0066;
-            color: white;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        
+        .nav-links {
+            display: flex;
+            gap: calc(1.5rem * var(--golden-ratio));
         }
-
-        .search-section .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-container {
-            margin-top: 20px;
-        }
-
-        .card {
-            border: none;
-            border-radius: 10px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .cta-section {
-            background-color: #ff0066;
-            color: white;
-            padding: 30px;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .cta-section button {
-            background-color: white;
-            color: #ff0066;
-            font-weight: bold;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-        }
-
-        .cta-section button:hover {
-            background-color: #ff4081;
-            transform: scale(1.05);
-        }
-
-        .footer {
-            background-color: #002f34;
-            color: white;
-            padding: 20px;
-            font-size: 0.8rem;
-        }
-
-        .footer a {
-            color: #aaa;
+        
+        .nav-links a {
             text-decoration: none;
-            transition: color 0.3s ease;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding: 0.75rem 0.5rem;
+            font-size: 1.05rem;
         }
-
-        .footer a:hover {
-            color: #ff0066;
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0.5rem;
+            left: 0.5rem;
+            width: calc(100% - 1rem);
+            height: 2px;
+            background-color: var(--primary-color);
+            transform: scaleX(0);
+            transition: var(--transition);
+            transform-origin: bottom right;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+        
+        /* Search Section */
+        .search-section {
+            padding: calc(5rem / var(--golden-ratio)) 0;
+            background-color: var(--white);
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+        
+        .search-title {
+            font-size: calc(2rem * var(--golden-ratio));
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+        
+        .search-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+        }
+        
+        .search-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .search-input, .search-select {
+            padding: 1rem 1.5rem;
+            border: 1px solid #E5E7EB;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus, .search-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+        }
+        
+        .search-input::placeholder {
+            color: #9CA3AF;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            padding: calc(8rem / var(--golden-ratio)) 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--white);
+            text-align: center;
+            margin-bottom: 5rem;
+            clip-path: ellipse(100% 60% at 50% 40%);
+        }
+        
+        .hero-title {
+            font-size: calc(2.5rem * var(--golden-ratio));
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: var(--white);
+            color: var(--primary-dark);
+            border: 2px solid var(--white);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Company Recommendations */
+        .company-section {
+            padding: 5rem 0;
+        }
+        
+        .section-title {
+            font-size: calc(2rem * var(--golden-ratio));
+            margin-bottom: 3rem;
+            color: var(--text-dark);
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+        
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .company-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: var(--transition);
+            border-top: 4px solid transparent;
+        }
+        
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-top-color: var(--primary-color);
+        }
+        
+        .company-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background-color: var(--bg-light);
+            padding: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .company-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+        
+        .job-count {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            background-color: var(--bg-light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            display: inline-block;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+            
+            nav {
+                padding: 1rem 1.5rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .nav-links a {
+                padding: 0.5rem 0.25rem;
+                font-size: 1rem;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .company-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#"><i class="fa fa-briefcase"></i> KerjaKini</a>
-            <div class="collapse navbar-collapse justify-content-end">
-                <a href="#" class="text-decoration-none">Cari Lowongan</a>
-                <a href="#">Lihat Profil</a>
-                <a href="#">Sumber Daya Karir</a>
-                <a href="login.php" class="btn btn-outline-light">Masuk</a>
-            </div>
+    <nav class="container">
+        <div class="logo">Kerjakini</div>
+        <div class="nav-links">
+            <a href="#">Cari Lowongan</a>
+            <a href="#">Cari Perusahaan</a>
+            <a href="#">Komunitas</a>
+            <a href="#">Masuk</a>
         </div>
     </nav>
-
+    
     <!-- Search Section -->
-    <div class="search-section text-center">
+    <section class="search-section">
         <div class="container">
-            <h3 class="mb-4">Cari Lowongan</h3>
-            <form class="row g-2">
-                <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Masukkan kata kunci">
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select">
-                        <option value="">Semua Klasifikasi</option>
-                        <option value="1">IT</option>
-                        <option value="3">Marketing</option>
-                        <option value="3">Bodyguard</option>
-                        <option value="4">Pengasuh Anak</option>
-                        <option value="5">Asisten</option>
-                        <option value="6">Sekertaris</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <input type="text" class="form-control" placeholder="Masukkan lokasi">
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Cari</button>
-                </div>
-            </form>
+            <h1 class="search-title">Kerjakini</h1>
+            <p class="search-subtitle">Mencari Lowongan</p>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Masukan Kata kunci...">
+                <select class="search-select">
+                    <option>Semua Klasifikasi</option>
+                    <option value="">Tukang parkir</option>
+                    <option value="">Data Analisis</option>
+                    <option value="">Budak Korporat</option>
+                    <option value="">Tukang Korupsi</option>
+                </select>
+                <select class="search-select">
+                    <option>Lokasi Bekerja...</option>
+                    <option>Depok.</option>
+                    <option>jakarta</option>
+                    <option>jawa tengah</option>
+                    <option>bogor</option>
+                </select>
+            </div>
         </div>
-    </div>
-
-    <!-- Company Cards -->
-    <div class="container card-container">
-        <h4 class="mb-4">Temukan perusahaan Anda berikutnya</h4>
-        <div class="row row-cols-1 row-cols-md-4 g-4">
-            <div class="col">
-                <div class="card">
-                    <img src="navtan.jpg" class="card-img-top" alt="Company Logo">
-                    <div class="card-body">
-                        <h5 class="card-title">Navtan Animation</h5>
-                        <p class="card-text">79 Pekerjaan</p>
-                    </div>
-                </div>
+    </section>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h2 class="hero-title">Ubah karir mu menjadi lebih baik dengan bergabung bersama kami!</h2>
+            <div class="hero-buttons">
+                <a href="#" class="btn btn-primary">Masuk</a>
+                <a href="#" class="btn btn-outline">Daftar</a>
             </div>
-            <div class="col">
-                <div class="card">
-                    <img src="joy.jpg" class="card-img-top" alt="Company Logo">
-                    <div class="card-body">
-                        <h5 class="card-title">JoyBoy Company</h5>
-                        <p class="card-text">30 Pekerjaan</p>
-                    </div>
+        </div>
+    </section>
+    
+    <!-- Company Recommendations -->
+    <section class="company-section">
+        <div class="container">
+            <h2 class="section-title">Rekomendasi Perusahaan</h2>
+            <div class="company-grid">
+                <div class="company-card">
+                    <img src="navtan.jpg" alt="Navtan Animation" class="company-logo">
+                    <div class="company-name">Navtan Animation</div>
+                    <div class="job-count">79 Pekerjaan</div>
                 </div>
-            </div>
-            <div class="col">
-                <div class="card">
-                    <img src="jax.jpg" class="card-img-top" alt="Company Logo">
-                    <div class="card-body">
-                        <h5 class="card-title">JaxMediaTama</h5>
-                        <p class="card-text">35 Pekerjaan</p>
-                    </div>
+                <div class="company-card">
+                    <img src="jax.jpg" alt="JaxMediaTama" class="company-logo">
+                    <div class="company-name">JaxMediaTama</div>
+                    <div class="job-count">19 Pekerjaan</div>
                 </div>
-            </div>
-            <div class="col">
-                <div class="card">
-                    <img src="maven.jpg" class="card-img-top" alt="Company Logo">
-                    <div class="card-body">
-                        <h5 class="card-title">Maven Company</h5>
-                        <p class="card-text">25 Pekerjaan</p>
-                    </div>
+                <div class="company-card">
+                    <img src="maven.jpg" alt="Maven Company" class="company-logo">
+                    <div class="company-name">Maven Company</div>
+                    <div class="job-count">9 Pekerjaan</div>
+                </div>
+                <div class="company-card">
+                    <img src="joy.jpg" alt="JoyBoy Company" class="company-logo">
+                    <div class="company-name">JoyBoy Company</div>
+                    <div class="job-count">32 Pekerjaan</div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- CTA Section -->
-    <div class="container cta-section mt-5">
-        <h3>"Hello" karir dan gaji lebih baik</h3>
-        <p>Dapatkan tips & fiturnya</p>
-        <button class="btn">Mulai Sekarang</button>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-        <div class="container d-flex justify-content-between">
-            <p>Hak cipta © 2024 KerjaKini</p>
-            <div>
-                <a href="#">Tentang Kami</a> |
-                <a href="#">Kontak</a> |
-                <a href="#">Privasi</a>
-            </div>
-        </div>
-    </div>
+    </section>
 </body>
-
 </html>
