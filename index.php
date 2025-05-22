@@ -73,6 +73,7 @@
         .nav-links {
             display: flex;
             gap: calc(1.5rem * var(--golden-ratio));
+            list-style: none;
         }
         
         .nav-links a {
@@ -107,6 +108,16 @@
             transform-origin: bottom left;
         }
         
+        /* Mobile Menu Button - Hidden by default */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            cursor: pointer;
+        }
+        
         /* Search Section */
         .search-section {
             padding: calc(5rem / var(--golden-ratio)) 0;
@@ -126,6 +137,9 @@
             font-size: 1.25rem;
             color: var(--text-light);
             margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .search-container {
@@ -288,7 +302,48 @@
             display: inline-block;
         }
         
+        /* Mobile Menu Styles */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: var(--box-shadow);
+            z-index: 99;
+            padding: 1rem 0;
+        }
+        
+        .mobile-menu.active {
+            display: block;
+        }
+        
+        .mobile-menu a {
+            display: block;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .mobile-menu a:hover {
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+        }
+        
         /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .search-title {
+                font-size: 2.2rem;
+            }
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 0 1.5rem;
@@ -299,12 +354,11 @@
             }
             
             .nav-links {
-                gap: 1rem;
+                display: none;
             }
             
-            .nav-links a {
-                padding: 0.5rem 0.25rem;
-                font-size: 1rem;
+            .mobile-menu-btn {
+                display: block;
             }
             
             .search-container {
@@ -312,17 +366,59 @@
                 gap: 1rem;
             }
             
+            .search-input, .search-select {
+                width: 100%;
+            }
+            
             .hero-buttons {
                 flex-direction: column;
                 gap: 1rem;
+                align-items: center;
             }
             
             .hero-title {
                 font-size: 2rem;
             }
             
+            .search-title {
+                font-size: 1.8rem;
+            }
+            
+            .search-subtitle {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+            
             .company-grid {
                 grid-template-columns: 1fr;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+            
+            .hero-section {
+                clip-path: none;
+                padding: 4rem 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .hero-title {
+                font-size: 1.6rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 0.8rem 1.5rem;
+                width: 100%;
+                max-width: 250px;
+                text-align: center;
             }
         }
     </style>
@@ -331,34 +427,43 @@
     <!-- Navbar -->
     <nav class="container">
         <div class="logo">Kerjakini</div>
-        <div class="nav-links">
-            <a href="#">Cari Lowongan</a>
-            <a href="#">Cari Perusahaan</a>
-            <a href="#">Komunitas</a>
-            <a href="#">Masuk</a>
-        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        <ul class="nav-links">
+            <li><a href="#">Cari Lowongan</a></li>
+            <li><a href="#">Cari Perusahaan</a></li>
+            <li><a href="#">Komunitas</a></li>
+            <li><a href="#">Masuk</a></li>
+        </ul>
     </nav>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#">Cari Lowongan</a>
+        <a href="#">Cari Perusahaan</a>
+        <a href="#">Komunitas</a>
+        <a href="#">Masuk</a>
+    </div>
     
     <!-- Search Section -->
     <section class="search-section">
         <div class="container">
             <h1 class="search-title">Kerjakini</h1>
-            <p class="search-subtitle">Mencari Lowongan</p>
+            <p class="search-subtitle">Temukan pekerjaan impianmu dengan mudah dan cepat</p>
             <div class="search-container">
                 <input type="text" class="search-input" placeholder="Masukan Kata kunci...">
                 <select class="search-select">
                     <option>Semua Klasifikasi</option>
-                    <option value="">Tukang parkir</option>
-                    <option value="">Data Analisis</option>
-                    <option value="">Budak Korporat</option>
-                    <option value="">Tukang Korupsi</option>
+                    <option value="">IT & Software</option>
+                    <option value="">Marketing</option>
+                    <option value="">Keuangan</option>
+                    <option value="">Desain</option>
                 </select>
                 <select class="search-select">
                     <option>Lokasi Bekerja...</option>
-                    <option>Depok.</option>
-                    <option>jakarta</option>
-                    <option>jawa tengah</option>
-                    <option>bogor</option>
+                    <option>Jakarta</option>
+                    <option>Bandung</option>
+                    <option>Surabaya</option>
+                    <option>Bali</option>
                 </select>
             </div>
         </div>
@@ -403,5 +508,30 @@
             </div>
         </div>
     </section>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                this.textContent = '✕';
+            } else {
+                this.textContent = '☰';
+            }
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!mobileMenu.contains(event.target) && event.target !== mobileMenuBtn) {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.textContent = '☰';
+            }
+        });
+    </script>
 </body>
 </html>
