@@ -314,6 +314,64 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
         }
+
+        /* Custom File Input Styling */
+        .file-input-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background-color: var(--white);
+            border: 1px dashed #E5E7EB;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-input-label:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(108, 99, 255, 0.05);
+        }
+
+        .file-input-text {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .file-input-button {
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: calc(var(--border-radius) - 0.2rem);
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .file-input-label:hover .file-input-button {
+            background-color: var(--primary-dark);
+        }
+
+        .file-input {
+            position: absolute;
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .file-name {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--primary-dark);
+            display: none;
+        }
         
         .example {
             font-size: 0.875rem;
@@ -583,6 +641,17 @@
                 height: 30px;
                 font-size: 0.9rem;
             }
+
+            .file-input-label {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .file-input-button {
+                margin-top: 0.5rem;
+                width: 100%;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -610,7 +679,7 @@
     
     <!-- Mobile Menu -->
     <ul class="mobile-menu" id="mobileMenu">
-        <li><a href="#">Cari Lowongan</a></li>
+        <li><a href="users_home.php">Cari Lowongan</a></li>
         <li><a href="#">Cari Perusahaan</a></li>
         <li><a href="#">Komunitas</a></li>
         <li id="mobileUserMenu">
@@ -673,6 +742,19 @@
                     <label for="skills">Keahlian</label>
                     <textarea name="skill" id="skills" placeholder="Masukkan keahlian yang dimiliki"></textarea>
                 </div>
+
+                <div class="field">
+                    <label>Unggah CV</label>
+                    <div class="file-input-container">
+                        <label class="file-input-label">
+                            <span class="file-input-text">Pilih file atau seret ke sini</span>
+                            <span class="file-input-button">Pilih File</span>
+                            <input type="file" class="file-input" id="cv" name="cv" accept=".pdf,.doc,.docx">
+                        </label>
+                        <div class="file-name" id="file-name">Belum ada file dipilih</div>
+                    </div>
+                    <p class="example">Format file: PDF, DOC, DOCX (Maksimal 5MB)</p>
+                </div>
                 
                 <input type="submit" class="btn btn-primary" value="Simpan Perubahan">
             </form>
@@ -682,13 +764,15 @@
         <section class="dashboard-section">
             <h2 class="section-title">Lamaran Kerja</h2>
             
-            <div class="application-card">
-                <h3>Jaga Ternak Pak Andi</h3>
-                <p>Bogor</p>
-                <p>Rp. 2.000.000</p>
-                <p>Melamar pada 15/03/2023</p>
-                <p class="status-accepted">Diterima</p>
-            </div>
+            <a href="user_accapt.php" style="text-decoration: none;">
+                <div class="application-card">
+                    <h3>Jaga Ternak Pak Andi</h3>
+                    <p>Bogor</p>
+                    <p>Rp. 2.000.000</p>
+                    <p>Melamar pada 15/03/2023</p>
+                    <p class="status-accepted">Diterima</p>
+                </div>
+            </a>
             
             <div class="application-card">
                 <h3>Developer Web</h3>
@@ -733,6 +817,60 @@
                 mobileUserMenu.classList.remove('active');
             }
         });
+
+        // File input display
+        const fileInput = document.querySelector('.file-input');
+        const fileNameDisplay = document.getElementById('file-name');
+
+        fileInput.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                fileNameDisplay.textContent = this.files[0].name;
+                fileNameDisplay.style.display = 'block';
+            } else {
+                fileNameDisplay.textContent = 'Belum ada file dipilih';
+                fileNameDisplay.style.display = 'none';
+            }
+        });
+
+        // Drag and drop functionality
+        const fileInputLabel = document.querySelector('.file-input-label');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileInputLabel.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileInputLabel.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileInputLabel.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            fileInputLabel.classList.add('highlight');
+        }
+
+        function unhighlight() {
+            fileInputLabel.classList.remove('highlight');
+        }
+
+        fileInputLabel.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            
+            // Trigger change event manually
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        }
     </script>
 </body>
 </html>
