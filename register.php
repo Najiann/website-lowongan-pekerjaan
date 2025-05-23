@@ -1,24 +1,5 @@
 <?php
-session_start();
-include 'koneksi.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    $query = $conn->query("SELECT * FROM tb_user WHERE email='$email' AND password='$password'");
-    $user = $query->fetch_assoc();
-
-    if ($user) {
-        $_SESSION['user_id'] = $user['id_User'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['email'] = $user['email'];
-        header("Location: dashadmn.php");
-        exit;
-    } else {
-        $error = "Email atau kata sandi salah!";
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Kerjakini</title>
+    <title>Daftar - Kerjakini</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -63,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             padding: 2rem;
         }
         
-        /* Login Container */
-        .login-container {
+        /* Register Container */
+        .register-container {
             width: 100%;
             max-width: 500px;
             background-color: var(--white);
@@ -75,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             overflow: hidden;
         }
         
-        .login-container::before {
+        .register-container::before {
             content: '';
             position: absolute;
             top: 0;
@@ -85,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
         }
         
-        .login-container h3 {
+        .register-container h3 {
             font-size: 1.8rem;
             color: var(--primary-dark);
             margin-bottom: 2rem;
@@ -121,6 +102,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
         }
         
+        /* Password Requirements */
+        .password-requirements {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        .password-requirements ul {
+            padding-left: 1.2rem;
+            margin-top: 0.3rem;
+        }
+        
         /* Button Styles */
         .btn {
             width: 100%;
@@ -146,35 +139,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             text-align: center;
         }
         
-        .forgot-password {
-            display: block;
-            text-align: right;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--primary-color);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-        
-        .forgot-password:hover {
-            color: var(--primary-dark);
-            text-decoration: underline;
-        }
-        
-        .register-link {
+        .login-link {
             margin-top: 1.5rem;
             font-size: 0.95rem;
             color: var(--text-light);
         }
         
-        .register-link a {
+        .login-link a {
             color: var(--primary-color);
             text-decoration: none;
             font-weight: 500;
             transition: var(--transition);
         }
         
-        .register-link a:hover {
+        .login-link a:hover {
             color: var(--primary-dark);
             text-decoration: underline;
         }
@@ -222,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            .login-container {
+            .register-container {
                 padding: 2rem;
             }
         }
@@ -232,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 padding: 1rem;
             }
             
-            .login-container {
+            .register-container {
                 padding: 1.5rem;
             }
         }
@@ -240,13 +218,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <div class="login-container">
+    <div class="register-container">
         <a href="#" class="logo">
             <span class="logo-icon">K</span>
             <span>erjakini</span>
         </a>
         
-        <h3>Masuk ke Akun Anda</h3>
+        <h3>Buat Akun Baru</h3>
         
         <?php if (isset($error)): ?>
             <div class="alert alert-danger"><?= $error; ?></div>
@@ -254,19 +232,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <form action="" method="post">
             <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" placeholder="Buat username unik" required>
+            </div>
+            <div class="form-group">
                 <label for="email">Alamat Email</label>
                 <input type="email" name="email" id="email" placeholder="Masukkan email Anda" required>
             </div>
             <div class="form-group">
                 <label for="password">Kata Sandi</label>
-                <input type="password" name="password" id="password" placeholder="Masukkan kata sandi" required>
-                <a href="#" class="forgot-password">Lupa kata sandi?</a>
+                <input type="password" name="password" id="password" placeholder="Buat kata sandi" required>
+                <div class="password-requirements">
+                    <small>Kata sandi harus memenuhi:</small>
+                    <ul>
+                        <li>Minimal 8 karakter</li>
+                        <li>Mengandung huruf dan angka</li>
+                    </ul>
+                </div>
             </div>
-            <button type="submit" class="btn">Masuk</button>
+            <div class="form-group">
+                <label for="confirm_password">Konfirmasi Kata Sandi</label>
+                <input type="password" name="confirm_password" id="confirm_password" placeholder="Ulangi kata sandi" required>
+            </div>
+            <button type="submit" class="btn">Daftar Sekarang</button>
         </form>
 
-        <p class="register-link text-center">
-            Tidak punya akun? <a href="register.php">Daftar</a>
+        <p class="login-link text-center">
+            Sudah punya akun? <a href="login.php">Masuk</a>
         </p>
     </div>
 </body>

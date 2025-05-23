@@ -182,6 +182,7 @@
         /* Application Container */
         .container-information {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             gap: 2rem;
             padding: 3rem 0;
@@ -189,6 +190,7 @@
         
         .information-users, .information-job {
             flex: 1;
+            min-width: 300px;
             background-color: var(--white);
             border-radius: var(--border-radius);
             padding: 2rem;
@@ -222,6 +224,28 @@
         .information-job p {
             color: var(--text-light);
             margin-bottom: 1rem;
+        }
+        
+        /* Warning All Section */
+        .warmingall {
+            width: 100%;
+            background-color: rgba(255, 101, 132, 0.05);
+            border-left: 4px solid var(--secondary-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 1rem;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .warmingall h2 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .warmingall p {
+            color: var(--text-dark);
+            line-height: 1.6;
         }
         
         /* Form Styles */
