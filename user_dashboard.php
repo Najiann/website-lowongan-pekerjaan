@@ -665,8 +665,8 @@
         <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         <ul class="nav-links">
             <li><a href="users_home.php">Cari Lowongan</a></li>
-            <li><a href="#">Cari Perusahaan</a></li>
-            <li><a href="#">Komunitas</a></li>
+            <li><a href="user_company_list.php">Cari Perusahaan</a></li>
+            <li><a href="user_community.php">Komunitas</a></li>
             <li>
                 <a href="#">Username</a>
                 <ul class="dropdown">
@@ -681,7 +681,7 @@
     <ul class="mobile-menu" id="mobileMenu">
         <li><a href="users_home.php">Cari Lowongan</a></li>
         <li><a href="user_company_list.php">Cari Perusahaan</a></li>
-        <li><a href="#">Komunitas</a></li>
+        <li><a href="user_community.php">Komunitas</a></li>
         <li id="mobileUserMenu">
             <a href="javascript:void(0)">Username</a>
             <ul class="mobile-dropdown">

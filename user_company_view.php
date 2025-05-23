@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kerjakini - Dashboard Pengguna</title>
+    <title>Kerjakini - Perusahaan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -179,126 +179,188 @@
             cursor: pointer;
         }
         
-        /* Search Section */
-        .search-section {
-            padding: 4rem 0;
-            background: linear-gradient(135deg, rgba(108, 99, 255, 0.05), rgba(255, 101, 132, 0.05));
+        /* Company Profile Section */
+        .company-profile {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+        
+        .company-profileall, .joball {
+            flex: 1;
+            min-width: 300px;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .company-profileall h1, .joball h1 {
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .company-profileall h1::after, .joball h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+        
+        .header-company {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .header-company img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+        }
+        
+        .header-company h1 {
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            margin: 0;
+        }
+        
+        .body-company {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-top: 1.5rem;
             position: relative;
             overflow: hidden;
         }
-        
-        .search-section::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 80% 20%, rgba(108, 99, 255, 0.03) 0%, transparent 20%),
-                radial-gradient(circle at 20% 80%, rgba(255, 101, 132, 0.03) 0%, transparent 20%);
-            z-index: 0;
-        }
-        
-        .search-title {
-            font-size: 2.5rem;
-            color: var(--primary-dark);
-            margin-bottom: 1rem;
-            text-align: center;
-            position: relative;
-        }
-        
-        .search-subtitle {
-            color: var(--text-light);
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-            position: relative;
-        }
-        
-        .search-container {
-            display: flex;
-            gap: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .search-input {
-            flex: 1;
-            padding: 0.75rem 1.5rem;
-            border: 1px solid #E5E7EB;
-            border-radius: var(--border-radius);
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
-        }
-        
-        .search-select {
-            padding: 0.75rem 1.5rem;
-            border: 1px solid #E5E7EB;
-            border-radius: var(--border-radius);
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            color: var(--text-light);
-            background-color: var(--white);
-            transition: var(--transition);
-        }
-        
-        .search-select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
-        }
-        
-        /* Jobs List */
-        .list-job {
-            padding: 3rem 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .job {
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-            position: relative;
-        }
-        
-        .job::before {
-            content: "";
+
+        .body-company::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 4px;
             height: 100%;
             background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
-            border-radius: var(--border-radius) 0 0 var(--border-radius);
+        }
+
+        .company-detail {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-item {
+            flex: 1 1 200px;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .detail-icon {
+            width: 24px;
+            height: 24px;
+            background-color: rgba(108, 99, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .detail-content h3 {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .detail-content p {
+            font-size: 1rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .company-description {
+            background: rgba(243, 244, 246, 0.5);
+            border-left: 3px solid var(--primary-color);
+            padding: 1.5rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin-top: 1.5rem;
+            position: relative;
+        }
+
+        .company-description::before {
+            content: 'Tentang Kami';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--white);
+            padding: 0 10px;
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .company-description p {
+            color: var(--text-dark);
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .body-company {
+                padding: 1.5rem;
+            }
+            
+            .detail-item {
+                flex: 1 1 100%;
+            }
+            
+            .company-description {
+                padding: 1.25rem;
+            }
         }
         
-        .job:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        .information-job {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: var(--bg-light);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
         }
         
-        .job h2 {
+        .information-job:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .information-job h2 {
             color: var(--primary-dark);
             margin-bottom: 0.5rem;
-            font-size: 1.3rem;
         }
         
-        .job p {
+        .information-job p {
             color: var(--text-light);
             margin-bottom: 0.5rem;
-            font-size: 0.9rem;
         }
         
         /* Mobile Menu Styles */
@@ -349,33 +411,13 @@
             display: block;
         }
         
-        /* Background Patterns */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.05) 0%, transparent 20%);
-            z-index: -1;
-            pointer-events: none;
-        }
-        
         /* Responsive adjustments */
         @media (max-width: 992px) {
-            .search-title {
-                font-size: 2rem;
-            }
-            
-            .search-container {
+            .company-profile {
                 flex-direction: column;
             }
             
-            .search-input,
-            .search-select {
+            .company-profileall, .joball {
                 width: 100%;
             }
         }
@@ -397,12 +439,8 @@
                 display: block;
             }
             
-            .search-section {
-                padding: 3rem 0;
-            }
-            
-            .list-job {
-                grid-template-columns: 1fr;
+            .company-profileall, .joball {
+                padding: 1.5rem;
             }
         }
         
@@ -411,22 +449,10 @@
                 padding: 0 1rem;
             }
             
-            .search-title {
-                font-size: 1.8rem;
-            }
-            
-            .search-subtitle {
-                font-size: 1rem;
-            }
-            
-            .logo {
-                font-size: 1.2rem;
-            }
-            
-            .logo-icon {
-                width: 30px;
-                height: 30px;
-                font-size: 0.9rem;
+            .header-company {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
             }
         }
     </style>
@@ -466,62 +492,98 @@
             </ul>
         </li>
     </ul>
-
-    <!-- Search Section -->
-    <section class="search-section">
-        <div class="container">
-            <h1 class="search-title">Kerjakini</h1>
-            <p class="search-subtitle">Temukan pekerjaan impianmu dengan mudah dan cepat</p>
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Masukan Kata kunci...">
-                <select class="search-select">
-                    <option>Semua Klasifikasi</option>
-                    <option value="">IT & Software</option>
-                    <option value="">Marketing</option>
-                    <option value="">Keuangan</option>
-                    <option value="">Desain</option>
-                </select>
-                <select class="search-select">
-                    <option>Lokasi Bekerja...</option>
-                    <option>Jakarta</option>
-                    <option>Bandung</option>
-                    <option>Surabaya</option>
-                    <option>Bali</option>
-                </select>
+    
+    <!-- Company Profile Section -->
+    <section class="container company-profile">
+            <div class="company-profileall">
+                <h1>Profile Perusahaan</h1>
+                <div class="header-company">
+                    <img src="maven.jpg" alt="logo perusahaan">
+                    <h1>Maven Town Company</h1>
+                </div>
+                <div class="body-company">
+                    <div class="company-detail">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                            </div>
+                            <div class="detail-content">
+                                <h3>Email Perusahaan</h3>
+                                <p>mavencorp@gmail.com</p>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                </svg>
+                            </div>
+                            <div class="detail-content">
+                                <h3>Nomor Telepon</h3>
+                                <p>+62 858-1430-3273</p>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                            </div>
+                            <div class="detail-content">
+                                <h3>Alamat Perusahaan</h3>
+                                <p>Jl. Kejora, Simpang Sumpit, Jakarta Utara, Indonesia</p>
+                            </div>
+                        </div>
+                </div>
+                
+                <div class="company-description">
+                    <p>
+                        Maven Town Company adalah perusahaan inovatif yang berfokus pada pengembangan solusi digital kreatif. 
+                        Dengan tim profesional yang berpengalaman lebih dari 10 tahun di industri ini, kami berkomitmen untuk 
+                        memberikan produk dan layanan berkualitas tinggi kepada klien kami.
+                        <br><br>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias explicabo distinctio officiis! 
+                        Eum expedita reiciendis obcaecati rem voluptas porro animi esse quo, quos excepturi dolores sint 
+                        id deserunt, quae mollitia!
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="joball">
+            <h1>Ada Loker Nihh!!!</h1>
+            <div class="information-job">
+                <h2>Jual Ayam pak Eko</h2>
+                <p>Lokasi, lokasi, lokasi</p>
+                <p>Gaji: Rp. 3.000.000</p>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi optio ex obcaecati dolor recusandae atque! Saepe assumenda alias, 
+                    odit officiis doloremque numquam iure perferendis dolores ipsa explicabo repellendus laborum sunt!
+                </p>
+            </div>
+            <div class="information-job">
+                <h2>Jual Ayam pak Eko</h2>
+                <p>Lokasi, lokasi, lokasi</p>
+                <p>Gaji: Rp. 3.000.000</p>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi optio ex obcaecati dolor recusandae atque! Saepe assumenda alias, 
+                    odit officiis doloremque numquam iure perferendis dolores ipsa explicabo repellendus laborum sunt!
+                </p>
+            </div>
+            <div class="information-job">
+                <h2>Jual Ayam pak Eko</h2>
+                <p>Lokasi, lokasi, lokasi</p>
+                <p>Gaji: Rp. 3.000.000</p>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi optio ex obcaecati dolor recusandae atque! Saepe assumenda alias, 
+                    odit officiis doloremque numquam iure perferendis dolores ipsa explicabo repellendus laborum sunt!
+                </p>
             </div>
         </div>
     </section>
-
-    <!-- Jobs List -->
-     <section class="list-job container">
-        <a href="user_aply.php" style="text-decoration: none;">
-            <div class="job">
-                <h2>Kuli bangunan</h2>
-                <p>Maven Company</p>
-                <p>lokasi: Depok, Jawa barat</p>
-                <p>Gaji: Rp. 2.000.000</p>
-                <p>Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            </div>
-        </a>
-        <a href="user_aply.php" style="text-decoration: none;">
-            <div class="job">
-                <h2>Kuli bangunan</h2>
-                <p>Maven Company</p>
-                <p>lokasi: Depok, Jawa barat</p>
-                <p>Gaji: Rp. 2.000.000</p>
-                <p>Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            </div>
-        </a>
-        <a href="user_aply.php" style="text-decoration: none;">
-            <div class="job">
-                <h2>Kuli bangunan</h2>
-                <p>Maven Company</p>
-                <p>lokasi: Depok, Jawa barat</p>
-                <p>Gaji: Rp. 2.000.000</p>
-                <p>Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            </div>
-        </a>
-     </section>
 
     <script>
         // Mobile Menu Toggle
