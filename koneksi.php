@@ -3,6 +3,6 @@
 $hostname = 'localhost';
 $username = 'root';
 $password = '';
-$database = 'jobdesk';
+$database = 'jobs';
 
 $conn = mysqli_connect($hostname, $username, $password, $database);

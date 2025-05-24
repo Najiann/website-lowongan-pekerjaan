@@ -429,10 +429,10 @@
         <div class="logo">Kerjakini</div>
         <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         <ul class="nav-links">
-            <li><a href="#">Cari Lowongan</a></li>
-            <li><a href="#">Cari Perusahaan</a></li>
-            <li><a href="#">Komunitas</a></li>
-            <li><a href="#">Masuk</a></li>
+            <li><a href="user_company_list.php">Cari Lowongan</a></li>
+            <li><a href="user_company_view.php">Cari Perusahaan</a></li>
+            <li><a href="user_community.php">Komunitas</a></li>
+            <li><a href="login.php">Masuk</a></li>
         </ul>
     </nav>
     

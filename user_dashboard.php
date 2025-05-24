@@ -1,4 +1,102 @@
-<!DOCTYPE html>
+<?php
+include "koneksi.php";
+session_start();
+
+// Cek session login
+if (!isset($_SESSION['user_id'])) {
+    echo "Session user tidak ditemukan. Silakan login terlebih dahulu.";
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
+// Ambil data user
+$sql = "SELECT * FROM users WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user_data = $result->fetch_assoc();
+
+if (!$user_data) {
+    echo "User tidak ditemukan.";
+    exit;
+}
+
+// Ambil data applicant (berdasarkan user_id)
+$query = $conn->prepare("SELECT * FROM applicants WHERE user_id = ?");
+$query->bind_param("i", $user_id);
+$query->execute();
+$result = $query->get_result();
+
+$profile_data = [];
+$applicants_id = null;
+if ($result->num_rows > 0) {
+    $profile_data = $result->fetch_assoc();
+    $applicants_id = $profile_data['id'];
+    $_SESSION['applicant_id'] = $applicants_id;
+}
+
+// Ambil sosial media
+$sosmed_data = [];
+if ($applicants_id) {
+    $sosmedQuery = $conn->prepare("SELECT * FROM social_media WHERE applicant_id = ?");
+    $sosmedQuery->bind_param("i", $applicants_id);
+    $sosmedQuery->execute();
+    $sosmedResult = $sosmedQuery->get_result();
+    if ($sosmedResult->num_rows > 0) {
+        $sosmed_data = $sosmedResult->fetch_assoc();
+    }
+}
+
+
+// Proses form (POST)
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $linkedin = trim($_POST['linkedin'] ?? '');
+    $instagram = trim($_POST['instagram'] ?? '');
+
+    if ($applicants_id) {
+        // Cek apakah sudah ada data social_media
+        $cekQuery = $conn->prepare("SELECT * FROM social_media WHERE applicant_id = ?");
+        $cekQuery->bind_param("i", $applicants_id);
+        $cekQuery->execute();
+        $result = $cekQuery->get_result();
+
+        if ($result->num_rows > 0) {
+            // Update
+            $update = $conn->prepare("UPDATE social_media SET linkedin = ?, instagram = ? WHERE applicant_id = ?");
+            $update->bind_param("ssi", $linkedin, $instagram, $applicants_id);
+            if (!$update->execute()) {
+                echo "Error update sosial media: " . $update->error;
+                exit;
+            }
+            $update->close();
+        } else {
+            // Insert
+            $insert = $conn->prepare("INSERT INTO social_media (applicants_id, linkedin, instagram) VALUES (?, ?, ?)");
+            $insert->bind_param("iss", $applicants_id, $linkedin, $instagram);
+            if (!$insert->execute()) {
+                echo "Error insert sosial media: " . $insert->error;
+                exit;
+            }
+            $insert->close();
+        }
+
+        echo "<script>alert('Data berhasil disimpan'); window.location.href = 'user_dashboard.php';</script>";
+        exit;
+    } else {
+        echo "Data applicant tidak ditemukan.";
+        exit;
+    }
+}
+?>
+
+
+
+
+
+
+<!DOCTYPE html> 
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -670,8 +768,8 @@
             <li>
                 <a href="#">Username</a>
                 <ul class="dropdown">
-                    <li><a href="#">Profile</a></li>
-                    <li><a href="#">Logout</a></li>
+                    <li><a href="user_dashboard.php">Profile</a></li>
+                    <li><a href="logout.php">Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -685,8 +783,8 @@
         <li id="mobileUserMenu">
             <a href="javascript:void(0)">Username</a>
             <ul class="mobile-dropdown">
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="user_dashboard.php">Profile</a></li>
+                <li><a href="logout.php">Logout</a></li>
             </ul>
         </li>
     </ul>
@@ -696,31 +794,46 @@
         <!-- User Information Section -->
         <section class="dashboard-section">
             <div class="user-card">
-                <h1>Selamat Datang, Username</h1>
-                <p>email@gmail.com</p>
-                <form action="" method="post">
+                <h1>Selamat Datang, <?= $user_data['username']; ?></h1>
+                <p><?php echo $user_data['email']; ?></p>
+                <form action="user_dashboard.php" method="POST">
                     <div class="field">
-                        <label for="social-media">Media Sosial</label>
-                        <input type="text" name="link" id="social-media" placeholder="https://linkedin.com/in/username">
+                        <label for="Linkedin">Media Sosial</label>
+                        <input type="text" name="linkedin" id="linkedin" value="<?= $sosmed_data['linkedin'] ?? ''; ?>" placeholder="https://linkedin.com/in/username">
                     </div>
+                    <div class="field">
+                        <label for="instagram">Instagram</label>
+                        <input type="text" name="instagram" id="instagram" value="<?= $sosmed_data['instagram'] ?? ''; ?>" placeholder="https://instagram.com/username">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </form>
-                <p>Bergabung Sejak 12/02/2000</p>
+                <p>Bergabung Sejak <?php echo date('d/m/Y', strtotime($user_data['created_at'] ?? 'now')); ?></p>
             </div>
         </section>
 
         <!-- User Profile Section -->
         <section class="dashboard-section">
             <h2 class="section-title">Tentang Saya</h2>
-            <form action="" method="post" class="form-group">
+            <form action="actionDash_user.php" method="post" class="form-group" enctype="multipart/form-data">
                 
                 <div class="field">
+                    <label for="name">Nama</label>
+                    <input type="text" name="nama" id="nama" value="<?= $profile_data['nama'] ?? ''; ?>" placeholder="Masukkan nama lengkap">
+                </div>
+
+                <div class="field">
                     <label for="birth-place">Tempat Lahir</label>
-                    <input type="text" name="tempat_lahir" id="birth-place" placeholder="Masukkan tempat lahir">
+                    <input type="text" name="tempat_lahir" id="birth-place" value="<?= $profile_data['tempat_lahir'] ?? ''; ?>" placeholder="Masukkan tempat lahir">
+                </div>
+
+                <div class="field">
+                    <label for="alamat">Alamat</label>
+                    <input type="text" name="alamat" id="alamat" value="<?= $profile_data['alamat'] ?? ''; ?>" placeholder="Masukkan alamat">
                 </div>
                 
                 <div class="field">
                     <label for="phone">Nomor Handphone</label>
-                    <input type="tel" inputmode="numeric" name="no_hp" id="phone" placeholder="Masukkan nomor handphone">
+                    <input type="tel" inputmode="numeric" name="no_hp" id="phone" value="<?= $profile_data['no_hp'] ?? ''; ?>" placeholder="Masukkan nomor handphone">
                 </div>
                 
                 <div class="field">
@@ -730,17 +843,17 @@
                         Sekolah Dasar Negeri 1 Jakarta<br>
                         Sekolah Menengah Pertama Negeri 2 Jakarta</p>
                     </div>
-                    <textarea name="pendidikan" id="education" placeholder="Masukkan riwayat pendidikan"></textarea>
+                    <textarea name="pendidikan" id="education" placeholder="Masukkan riwayat pendidikan"><?= $profile_data['pendidikan'] ?? ''; ?></textarea>
                 </div>
                 
                 <div class="field">
                     <label for="experience">Pengalaman</label>
-                    <textarea name="pengalaman" id="experience" placeholder="Masukkan pengalaman kerja"></textarea>
+                    <textarea name="pengalaman" id="experience" placeholder="Masukkan pengalaman kerja"><?= $profile_data['pengalaman'] ?? ''; ?></textarea>
                 </div>
                 
                 <div class="field">
                     <label for="skills">Keahlian</label>
-                    <textarea name="skill" id="skills" placeholder="Masukkan keahlian yang dimiliki"></textarea>
+                    <textarea name="skill" id="skills" placeholder="Masukkan keahlian yang dimiliki"><?= $profile_data['skill'] ?? ''; ?></textarea>
                 </div>
 
                 <div class="field">
@@ -749,11 +862,16 @@
                         <label class="file-input-label">
                             <span class="file-input-text">Pilih file atau seret ke sini</span>
                             <span class="file-input-button">Pilih File</span>
-                            <input type="file" class="file-input" id="cv" name="cv" accept=".pdf,.doc,.docx">
+                            <input type="file" class="file-input" id="cv" name="cv_file" accept=".pdf,.doc,.docx">
                         </label>
                         <div class="file-name" id="file-name">Belum ada file dipilih</div>
                     </div>
                     <p class="example">Format file: PDF, DOC, DOCX (Maksimal 5MB)</p>
+                    <?php if (!empty($profile_data['cv_file'])): ?>
+                        <p style="margin-top: 10px;">
+                            CV saat ini: <a href="<?php echo $profile_data['cv_file']; ?>" target="_blank">Lihat CV</a>
+                        </p>
+                    <?php endif; ?>
                 </div>
                 
                 <input type="submit" class="btn btn-primary" value="Simpan Perubahan">
@@ -763,24 +881,40 @@
         <!-- Job Applications Section -->
         <section class="dashboard-section">
             <h2 class="section-title">Lamaran Kerja</h2>
+            <?php
+            // Query untuk mengambil data lamaran kerja user ini
+            $applications_sql = "SELECT 
+                                    j.judul_pekerjaan, 
+                                    j.lokasi, 
+                                    j.gaji, 
+                                    a.tanggal_lamar, 
+                                    a.status
+                                FROM applications a
+                                JOIN job_vacancies j ON a.job_id = j.id
+                                WHERE a.applicant_id = '$applicants_id'
+                                ORDER BY a.tanggal_lamar DESC";
+            $applications_result = $conn->query($applications_sql);
             
-            <a href="user_accapt.php" style="text-decoration: none;">
+            if ($applications_result && $applications_result->num_rows > 0) {
+                while($app = $applications_result->fetch_assoc()) { 
+                    $status_class = ($app['status'] == 'Diterima') ? 'status-accepted' : '';
+                    $status_text = ucfirst($app['status']);
+            ?>
                 <div class="application-card">
-                    <h3>Jaga Ternak Pak Andi</h3>
-                    <p>Bogor</p>
-                    <p>Rp. 2.000.000</p>
-                    <p>Melamar pada 15/03/2023</p>
-                    <p class="status-accepted">Diterima</p>
+                    <h3><?php echo htmlspecialchars($app['judul_pekerjaan']); ?></h3>
+                    <p><?php echo htmlspecialchars($app['lokasi']); ?></p>
+                    <p>Rp. <?php echo number_format($app['gaji'], 0, ',', '.'); ?></p>
+                    <p>Melamar pada <?php echo date('d/m/Y', strtotime($app['tanggal_lamar'])); ?></p>
+                    <p class="<?php echo $status_class; ?>"><?php echo $status_text; ?></p>
                 </div>
-            </a>
-            
-            <div class="application-card">
-                <h3>Developer Web</h3>
-                <p>Jakarta</p>
-                <p>Rp. 8.000.000</p>
-                <p>Melamar pada 20/04/2023</p>
-                <p>Dalam Review</p>
-            </div>
+            <?php 
+                }
+            } else {
+            ?>
+                <div class="application-card">
+                    <p>Belum ada lamaran kerja</p>
+                </div>
+            <?php } ?>
         </section>
     </div>
 

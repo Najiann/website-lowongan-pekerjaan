@@ -6,20 +6,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $query = $conn->query("SELECT * FROM tb_user WHERE email='$email' AND password='$password'");
+    // Cari user berdasarkan email dan password biasa
+    $query = $conn->query("SELECT * FROM users WHERE email='$email' AND password='$password'");
     $user = $query->fetch_assoc();
 
     if ($user) {
-        $_SESSION['user_id'] = $user['id_User'];
+        $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['email'] = $user['email'];
-        header("Location: dashadmn.php");
+
+        // Cek role dan redirect
+        if ($user['role'] === 'Admin') {
+            header("Location: dashadmn.php"); // Pastikan file ini ADA dan NAMANYA BENAR
+        } else if (in_array($user['role'], ['user', 'User', 'Applicant'])) {
+            header("Location: users_home.php");
+        } else if (in_array($user['role'], ['Company', 'Perusahaan'])) {
+            header("Location: company_dashboard.php"); // Kalau ada dashboard untuk perusahaan
+        } else {
+            header("Location: login.php");
+        }
+
         exit;
     } else {
         $error = "Email atau kata sandi salah!";
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
