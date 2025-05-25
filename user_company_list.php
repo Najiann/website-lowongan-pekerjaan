@@ -1,3 +1,21 @@
+<?php
+include 'koneksi.php';
+session_start();
+
+// Cek session login
+if (!isset($_SESSION['user_id'])) {
+    echo "Session user tidak ditemukan. Silakan login terlebih dahulu.";
+    exit;
+}
+
+// ambil data job ama nama perusahaanya
+$query = "SELECT DISTINCT job_vacancies.*, companies.nama_perusahaan, companies.logo
+          FROM job_vacancies
+          JOIN companies ON job_vacancies.company_id = companies.id";
+
+$result = mysqli_query($conn, $query);
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -573,36 +591,18 @@
     <section class="company-list container">
         <h2>Daftar Perusahaan</h2>
         <p>Temukan lowongan baru, ulasan, budaya perusahaan, fasilitas, dan tunjangan.</p>
+        <?php while($row = mysqli_fetch_assoc($result)) : ?>
         <div class="company-card">
             <div class="company-logo">
-                <img src="maven.jpg" alt="Company Logo">
+                <img src="<?= htmlspecialchars($row['logo'] ?? 'images/default_logo.png') ?>" alt="Logo <?= htmlspecialchars($row['nama_perusahaan']) ?>">
             </div>
             <div class="company-info">
-                <h3>Maven Company</h3>
-                <p>Selalu melayani dengan penuh hati</p>
-                <a href="#" class="apply-button">Lihat Lebih Lengkap</a>
+                <h3><?= htmlspecialchars($row['nama_perusahaan'])?></h3>
+                <p><?= nl2br(htmlspecialchars($row['deskripsi']))?></p>
+                <a href="user_company_view.php" class="apply-button">Lihat Lebih Lengkap</a>
             </div>
         </div>
-        <div class="company-card">
-            <div class="company-logo">
-                <img src="maven.jpg" alt="Company Logo">
-            </div>
-            <div class="company-info">
-                <h3>Maven Company</h3>
-                <p>Selalu melayani dengan penuh hati</p>
-                <a href="#" class="apply-button">Lihat Lebih Lengkap</a>
-            </div>
-        </div>
-        <div class="company-card">
-            <div class="company-logo">
-                <img src="maven.jpg" alt="Company Logo">
-            </div>
-            <div class="company-info">
-                <h3>Maven Company</h3>
-                <p>Selalu melayani dengan penuh hati</p>
-                <a href="#" class="apply-button">Lihat Lebih Lengkap</a>
-            </div>
-        </div>
+        <?php endwhile; ?>
     </section>
 
     <!-- Warning Section -->

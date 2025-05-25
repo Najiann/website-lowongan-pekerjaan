@@ -438,10 +438,10 @@
     
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
-        <a href="#">Cari Lowongan</a>
-        <a href="#">Cari Perusahaan</a>
-        <a href="#">Komunitas</a>
-        <a href="#">Masuk</a>
+        <a href="user_company_list.php">Cari Lowongan</a>
+        <a href="user_company_view.php">Cari Perusahaan</a>
+        <a href="user_community.php">Komunitas</a>
+        <a href="login.php">Masuk</a>
     </div>
     
     <!-- Search Section -->
@@ -474,8 +474,8 @@
         <div class="container">
             <h2 class="hero-title">Ubah karir mu menjadi lebih baik dengan bergabung bersama kami!</h2>
             <div class="hero-buttons">
-                <a href="#" class="btn btn-primary">Masuk</a>
-                <a href="#" class="btn btn-outline">Daftar</a>
+                <a href="login.php" class="btn btn-primary">Masuk</a>
+                <a href="register.php" class="btn btn-outline">Daftar</a>
             </div>
         </div>
     </section>

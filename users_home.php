@@ -1,3 +1,22 @@
+<?php
+include 'koneksi.php';
+session_start();
+
+// Cek session login
+if (!isset($_SESSION['user_id'])) {
+    echo "Session user tidak ditemukan. Silakan login terlebih dahulu.";
+    exit;
+}
+
+// ambil data job ama nama perusahaanya
+$query = "SELECT job_vacancies.*, companies.nama_perusahaan
+          FROM job_vacancies
+          JOIN companies ON job_vacancies.company_id = companies.id";
+
+$result = mysqli_query($conn, $query);
+?>
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -494,33 +513,18 @@
 
     <!-- Jobs List -->
      <section class="list-job container">
-        <a href="user_aply.php" style="text-decoration: none;">
+        <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+        <a href="user_aply.php?id=<?= $row['id'] ?>" style="text-decoration: none;">
             <div class="job">
-                <h2>Kuli bangunan</h2>
-                <p>Maven Company</p>
-                <p>lokasi: Depok, Jawa barat</p>
-                <p>Gaji: Rp. 2.000.000</p>
-                <p>Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <h2><?= htmlspecialchars($row['judul_pekerjaan'])?></h2> <!-- htmlspecialchars() gunanya buat menghindasi xss-->
+                <p><?= htmlspecialchars($row['nama_perusahaan'])?></p>
+                <p>lokasi: <?= htmlspecialchars($row['lokasi'])?></p>
+                <p>Gaji: <?= number_format($row['gaji'], 0, ',', '.')?></p>
+                <p>Deskripsi: <?= nl2br(htmlspecialchars($row['deskripsi']))?></p>
+                <p>Syarat: <?= nl2br(htmlspecialchars($row['syarat']))?></p>
             </div>
         </a>
-        <a href="user_aply.php" style="text-decoration: none;">
-            <div class="job">
-                <h2>Kuli bangunan</h2>
-                <p>Maven Company</p>
-                <p>lokasi: Depok, Jawa barat</p>
-                <p>Gaji: Rp. 2.000.000</p>
-                <p>Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            </div>
-        </a>
-        <a href="user_aply.php" style="text-decoration: none;">
-            <div class="job">
-                <h2>Kuli bangunan</h2>
-                <p>Maven Company</p>
-                <p>lokasi: Depok, Jawa barat</p>
-                <p>Gaji: Rp. 2.000.000</p>
-                <p>Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            </div>
-        </a>
+        <?php endwhile; ?>
      </section>
 
     <script>

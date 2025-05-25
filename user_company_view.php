@@ -1,3 +1,32 @@
+<?php
+include "koneksi.php";
+session_start();
+
+// Cek session login
+if (!isset($_SESSION['user_id'])) {
+    echo "Session user tidak ditemukan. Silakan login terlebih dahulu.";
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
+// Ambil data perusahaan berdasarkan user_id
+$queryCompany = mysqli_query($conn, "SELECT * FROM companies WHERE user_id = $user_id");
+$company = mysqli_fetch_assoc($queryCompany);
+
+if (!$company) {
+    echo "Perusahaan tidak ditemukan.";
+    exit;
+}
+
+$company_id = $company['id'];
+
+// Ambil semua lowongan kerja berdasarkan company_id
+$queryJobs = mysqli_query($conn, "SELECT * FROM job_vacancies WHERE company_id = $company_id");
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -466,14 +495,14 @@
         </a>
         <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         <ul class="nav-links">
-            <li><a href="#">Cari Lowongan</a></li>
+            <li><a href="users_home.php">Cari Lowongan</a></li>
             <li><a href="user_company_list.php">Cari Perusahaan</a></li>
             <li><a href="user_community.php">Komunitas</a></li>
             <li>
                 <a href="#">Username</a>
                 <ul class="dropdown">
                     <li><a href="user_dashboard.php">Profile</a></li>
-                    <li><a href="#">Logout</a></li>
+                    <li><a href="logout.php">Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -481,14 +510,14 @@
     
     <!-- Mobile Menu -->
     <ul class="mobile-menu" id="mobileMenu">
-        <li><a href="#">Cari Lowongan</a></li>
+        <li><a href="users_home.php">Cari Lowongan</a></li>
         <li><a href="user_company_list.php">Cari Perusahaan</a></li>
         <li><a href="user_community.php">Komunitas</a></li>
         <li id="mobileUserMenu">
             <a href="javascript:void(0)">Username</a>
             <ul class="mobile-dropdown">
                 <li><a href="user_dashboard.php">Profile</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="logout.php">Logout</a></li>
             </ul>
         </li>
     </ul>
@@ -498,8 +527,8 @@
             <div class="company-profileall">
                 <h1>Profile Perusahaan</h1>
                 <div class="header-company">
-                    <img src="maven.jpg" alt="logo perusahaan">
-                    <h1>Maven Town Company</h1>
+                    <img src="<?= htmlspecialchars($row['logo'] ?? 'images/default_logo.png') ?>" alt="Logo <?= htmlspecialchars($row['nama_perusahaan']) ?>">
+                    <h1><?= htmlspecialchars($company['name']) ?></h1>
                 </div>
                 <div class="body-company">
                     <div class="company-detail">
@@ -512,7 +541,7 @@
                             </div>
                             <div class="detail-content">
                                 <h3>Email Perusahaan</h3>
-                                <p>mavencorp@gmail.com</p>
+                                <p><?= htmlspecialchars($company['email']) ?></p>
                             </div>
                         </div>
                         <div class="detail-item">
@@ -523,7 +552,7 @@
                             </div>
                             <div class="detail-content">
                                 <h3>Nomor Telepon</h3>
-                                <p>+62 858-1430-3273</p>
+                                <p><?= htmlspecialchars($company['phone']) ?></p>
                             </div>
                         </div>
                         <div class="detail-item">
@@ -535,53 +564,29 @@
                             </div>
                             <div class="detail-content">
                                 <h3>Alamat Perusahaan</h3>
-                                <p>Jl. Kejora, Simpang Sumpit, Jakarta Utara, Indonesia</p>
+                                <p><?= htmlspecialchars($company['address']) ?></p>
                             </div>
                         </div>
                 </div>
                 
                 <div class="company-description">
-                    <p>
-                        Maven Town Company adalah perusahaan inovatif yang berfokus pada pengembangan solusi digital kreatif. 
-                        Dengan tim profesional yang berpengalaman lebih dari 10 tahun di industri ini, kami berkomitmen untuk 
-                        memberikan produk dan layanan berkualitas tinggi kepada klien kami.
-                        <br><br>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias explicabo distinctio officiis! 
-                        Eum expedita reiciendis obcaecati rem voluptas porro animi esse quo, quos excepturi dolores sint 
-                        id deserunt, quae mollitia!
-                    </p>
+                    <p><?= nl2br(htmlspecialchars($company['description'])) ?></p>
                 </div>
             </div>
         </div>
         <div class="joball">
             <h1>Ada Loker Nihh!!!</h1>
+            <?php while ($job = mysqli_fetch_assoc($query_jobs)): ?>
             <div class="information-job">
-                <h2>Jual Ayam pak Eko</h2>
-                <p>Lokasi, lokasi, lokasi</p>
-                <p>Gaji: Rp. 3.000.000</p>
-                <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi optio ex obcaecati dolor recusandae atque! Saepe assumenda alias, 
-                    odit officiis doloremque numquam iure perferendis dolores ipsa explicabo repellendus laborum sunt!
-                </p>
+                <h2><?= htmlspecialchars($job['title']) ?></h2>
+                <p>Lokasi:</strong> <?= htmlspecialchars($job['location']) ?></p>
+                <p><strong>Gaji:</strong> Rp. <?= number_format($job['salary'], 0, ',', '.') ?></p>
+                <p><?= nl2br(htmlspecialchars($job['description'])) ?></p>
             </div>
-            <div class="information-job">
-                <h2>Jual Ayam pak Eko</h2>
-                <p>Lokasi, lokasi, lokasi</p>
-                <p>Gaji: Rp. 3.000.000</p>
-                <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi optio ex obcaecati dolor recusandae atque! Saepe assumenda alias, 
-                    odit officiis doloremque numquam iure perferendis dolores ipsa explicabo repellendus laborum sunt!
-                </p>
-            </div>
-            <div class="information-job">
-                <h2>Jual Ayam pak Eko</h2>
-                <p>Lokasi, lokasi, lokasi</p>
-                <p>Gaji: Rp. 3.000.000</p>
-                <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi optio ex obcaecati dolor recusandae atque! Saepe assumenda alias, 
-                    odit officiis doloremque numquam iure perferendis dolores ipsa explicabo repellendus laborum sunt!
-                </p>
-            </div>
+        <?php endwhile; ?>
+        <?php if (mysqli_num_rows($query_jobs) == 0): ?>
+            <p><em>Belum ada lowongan dari perusahaan ini.</em></p>
+        <?php endif; ?>
         </div>
     </section>
 

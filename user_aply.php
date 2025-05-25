@@ -1,3 +1,43 @@
+<?php
+include "koneksi.php";
+session_start();
+
+// Cek session login
+if (!isset($_SESSION['user_id'])) {
+    echo "Session user tidak ditemukan. Silakan login terlebih dahulu.";
+    exit;
+}
+$user_id = intval($_SESSION['user_id']); 
+
+// Pastikan ada parameter id
+if (!isset($_GET['id'])) {
+    echo "ID pekerjaan tidak ditemukan.";
+    exit;
+}
+
+$job_id = intval($_GET['id']); // Amankan input
+
+// Ambil satu data job berdasarkan id
+$query = "SELECT job_vacancies.*, companies.nama_perusahaan
+          FROM job_vacancies
+          JOIN companies ON job_vacancies.company_id = companies.id
+          WHERE job_vacancies.id = $job_id";
+
+$result = mysqli_query($conn, $query);
+
+// Jika tidak ditemukan
+if (mysqli_num_rows($result) == 0) {
+    echo "Pekerjaan tidak ditemukan.";
+    exit;
+}
+
+$row = mysqli_fetch_assoc($result);
+$query_applicant = "SELECT * FROM applicants WHERE user_id = $user_id LIMIT 1";
+$result_applicant = mysqli_query($conn, $query_applicant);
+$applicant = mysqli_fetch_assoc($result_applicant);
+
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -472,10 +512,10 @@
             <li><a href="user_company_list.php">Cari Perusahaan</a></li>
             <li><a href="user_community.php">Komunitas</a></li>
             <li>
-                <a href="#">Username</a>
+                <a href="#"><?= $user_data['username']; ?></a>
                 <ul class="dropdown">
                     <li><a href="user_dashboard.php">Profile</a></li>
-                    <li><a href="#">Logout</a></li>
+                    <li><a href="logout.php">Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -490,7 +530,7 @@
             <a href="javascript:void(0)">Username</a>
             <ul class="mobile-dropdown">
                 <li><a href="user_dashboard.php">Profile</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="logout.php">Logout</a></li>
             </ul>
         </li>
     </ul>
@@ -499,36 +539,36 @@
     <section class="container-information">
         <div class="information-users">
             <h1>Data Diri Anda</h1>
-            <form action="" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="job_id" id="job_id" value="">
-                <input type="hidden" name="applicant_id" id="applicant_id" value="">
+            <form action="action_apply.php" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="job_id" id="job_id" value="<?= $job_id ?>">
+                <input type="hidden" name="applicant_id" id="applicant_id" value="<?= htmlspecialchars($applicant['id']) ?>">
                 <div class="field">
                     <label for="name">Nama</label>
-                    <input type="text" name="name" id="name" value="">
+                    <input type="text" name="name" id="name" value="<?= htmlspecialchars($applicant['nama'] ?? '') ?>">
                 </div>
                 <div class="field">
                     <label for="tempat_lahir">Tempat Lahir</label>
-                    <input type="text" name="tempat_lahir" id="tempat_lahir" value="">
+                    <input type="text" name="tempat_lahir" id="tempat_lahir" value="<?= htmlspecialchars($applicant['tempat_lahir'] ?? '') ?>">
                 </div>
                 <div class="field">
                     <label for="no_hp">Nomor Handphone</label>
-                    <input type="text" name="no_hp" id="no_hp" value="">
+                    <input type="text" name="no_hp" id="no_hp" value="<?= htmlspecialchars($applicant['no_hp'] ?? '') ?>">
                 </div>
                 <div class="field">
                     <label for="alamat">Alamat</label>
-                    <textarea name="alamat" id="alamat"></textarea>
+                    <textarea name="alamat" id="alamat"><?= htmlspecialchars($applicant['alamat'] ?? '') ?></textarea>
                 </div>
                 <div class="field">
                     <label for="pendidikan">Riwayat Pendidikan</label>
-                    <textarea name="pendidikan" id="pendidikan"></textarea>
+                    <textarea name="pendidikan" id="pendidikan"><?= htmlspecialchars($applicant['pendidikan'] ?? '') ?></textarea>
                 </div>
                 <div class="field">
                     <label for="pengalaman">Riwayat Pengalaman</label>
-                    <textarea name="pengalaman" id="pengalaman"></textarea>
+                    <textarea name="pengalaman" id="pengalaman"><?= htmlspecialchars($applicant['pengalaman'] ?? '') ?></textarea>
                 </div>
                 <div class="field">
                     <label for="skill">Skills yang Dikuasai</label>
-                    <textarea name="skill" id="skill"></textarea>
+                    <textarea name="skill" id="skill"><?= htmlspecialchars($applicant['skill'] ?? '') ?></textarea>
                 </div>
                 <div class="field">
                     <label>File CV kamu</label>
@@ -538,7 +578,7 @@
                             <span class="file-input-button">Pilih File</span>
                             <input type="file" class="file-input" id="cv_file" name="cv_file" accept=".pdf,.doc,.docx">
                         </label>
-                        <div class="file-name" id="file-name">Belum ada file dipilih</div>
+                        <div class="file-name" id="file-name"><?= isset($applicant['cv_file']) ? basename($applicant['cv_file']) : 'Belum ada file dipilih' ?></div>
                     </div>
                 </div>
                 <button type="submit" class="btn">Kirim Lamaran</button>
@@ -546,17 +586,11 @@
         </div>
         <div class="information-job">
             <h1>Informasi Pekerjaan</h1>
-            <h2>Jual Ayam pak Eko</h2>
-            <p>Lokasi, lokasi, lokasi</p>
-            <p>Gaji: Rp. 3.000.000</p>
-            <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi optio ex obcaecati dolor recusandae atque! Saepe assumenda alias, 
-                odit officiis doloremque numquam iure perferendis dolores ipsa explicabo repellendus laborum sunt!
-            </p>
-            <p>
-                syarat Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                 Nihil nemo minus quae cupiditate assumenda? Accusantium perferendis est ea aliquam odit.
-            </p>
+            <h2><?= htmlspecialchars($row['judul_pekerjaan'])?></h2>
+            <p>lokasi: <?= htmlspecialchars($row['lokasi'])?></p>
+            <p>Gaji: <?= number_format($row['gaji'], 0, ',', '.')?></p>
+            <p>Deskripsi: <?= nl2br(htmlspecialchars($row['deskripsi']))?></p>
+            <p>Syarat: <?= nl2br(htmlspecialchars($row['syarat']))?></p>
         </div>
         <div class="warmingall">
             <h2>Himbauan</h2>
