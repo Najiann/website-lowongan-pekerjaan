@@ -1,3 +1,31 @@
+<?php
+include 'koneksi.php';
+session_start();
+
+// Cek session login
+if (!isset($_SESSION['username'])) {
+    header('Location: login.php');
+    exit;
+}
+if (!isset($_SESSION['user_id'])) {
+    echo "Session user tidak ditemukan. Silakan login terlebih dahulu.";
+    exit;
+}
+
+$username = $_SESSION['username'];
+
+// Query untuk ambil data job dan nama perusahaan
+$query = "SELECT job_vacancies.*, companies.nama_perusahaan
+          FROM job_vacancies
+          JOIN companies ON job_vacancies.company_id = companies.id";
+
+$result = mysqli_query($conn, $query);
+
+if (!$result) {
+    die("Query gagal: " . mysqli_error($conn));
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -447,6 +475,46 @@
             margin: 1.5rem 0 0.5rem;
             font-size: 1.1rem;
         }
+        .user-menu {
+            position: relative;
+        }
+
+        .mobile-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            min-width: 160px;
+            padding: 8px 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .mobile-dropdown.show {
+            display: block;
+        }
+
+        .mobile-dropdown li {
+            list-style: none;
+        }
+
+        .mobile-dropdown li a {
+            display: block;
+            padding: 10px 16px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        .mobile-dropdown li a:hover {
+            background-color: #f2f2f2;
+            color: #000;
+        }
         
         /* Responsive adjustments */
         @media (max-width: 992px) {
@@ -526,12 +594,12 @@
         <ul class="nav-links">
             <li><a href="users_home.php">Cari Lowongan</a></li>
             <li><a href="user_company_list.php">Cari Perusahaan</a></li>
-            <li><a href="#">Komunitas</a></li>
-            <li>
-                <a href="#">Username</a>
-                <ul class="dropdown">
+            <li><a href="user_community.php">Komunitas</a></li>
+            <li class="user-menu">
+                <a href="javascript:void(0)"><?= htmlspecialchars($username) ?></a>
+                <ul class="mobile-dropdown">
                     <li><a href="user_dashboard.php">Profile</a></li>
-                    <li><a href="#">Logout</a></li>
+                    <li><a href="logout.php">Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -541,12 +609,12 @@
     <ul class="mobile-menu" id="mobileMenu">
         <li><a href="users_home.php">Cari Lowongan</a></li>
         <li><a href="user_company_list.php">Cari Perusahaan</a></li>
-        <li><a href="#">Komunitas</a></li>
-        <li id="mobileUserMenu">
-            <a href="javascript:void(0)">Username</a>
+        <li><a href="user_community.php">Komunitas</a></li>
+        <li class="user-menu">
+            <a href="javascript:void(0)"><?= htmlspecialchars($username) ?></a>
             <ul class="mobile-dropdown">
                 <li><a href="user_dashboard.php">Profile</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="logout.php">Logout</a></li>
             </ul>
         </li>
     </ul>
@@ -659,11 +727,6 @@
             } else {
                 this.textContent = '☰';
             }
-        });
-        
-        // Mobile Dropdown Toggle
-        mobileUserMenu.addEventListener('click', function() {
-            this.classList.toggle('active');
         });
         
         // Close menu when clicking outside
@@ -805,6 +868,26 @@
                 articleModal.classList.remove('active');
                 document.body.style.overflow = 'auto';
             }
+        });
+        // Ambil semua user-menu
+        const userMenus = document.querySelectorAll('.user-menu');
+
+        userMenus.forEach(menu => {
+            const dropdown = menu.querySelector('.mobile-dropdown');
+
+            menu.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+
+            // Tutup dropdown saat klik di luar
+            document.addEventListener('click', function () {
+                dropdown.classList.remove('show');
+            });
+        });
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
         });
     </script>
 </body>

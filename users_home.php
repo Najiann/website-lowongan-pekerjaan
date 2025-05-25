@@ -3,29 +3,39 @@ include 'koneksi.php';
 session_start();
 
 // Cek session login
+if (!isset($_SESSION['username'])) {
+    header('Location: login.php');
+    exit;
+}
 if (!isset($_SESSION['user_id'])) {
     echo "Session user tidak ditemukan. Silakan login terlebih dahulu.";
     exit;
 }
 
-// ambil data job ama nama perusahaanya
+// Ambil username dari session untuk tampil di navbar
+$username = $_SESSION['username'];
+
+// Query untuk ambil data job dan nama perusahaan
 $query = "SELECT job_vacancies.*, companies.nama_perusahaan
           FROM job_vacancies
           JOIN companies ON job_vacancies.company_id = companies.id";
 
 $result = mysqli_query($conn, $query);
-?>
 
+if (!$result) {
+    die("Query gagal: " . mysqli_error($conn));
+}
+?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kerjakini - Dashboard Pengguna</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
         :root {
             --golden-ratio: 1.618;
@@ -367,7 +377,49 @@ $result = mysqli_query($conn, $query);
         .mobile-menu li.active .mobile-dropdown {
             display: block;
         }
-        
+
+        .user-menu {
+            position: relative;
+        }
+
+        .mobile-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            min-width: 160px;
+            padding: 8px 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .mobile-dropdown.show {
+            display: block;
+        }
+
+        .mobile-dropdown li {
+            list-style: none;
+        }
+
+        .mobile-dropdown li a {
+            display: block;
+            padding: 10px 16px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        .mobile-dropdown li a:hover {
+            background-color: #f2f2f2;
+            color: #000;
+        }
+
+
         /* Background Patterns */
         body::before {
             content: "";
@@ -462,26 +514,26 @@ $result = mysqli_query($conn, $query);
             <li><a href="#">Cari Lowongan</a></li>
             <li><a href="user_company_list.php">Cari Perusahaan</a></li>
             <li><a href="user_community.php">Komunitas</a></li>
-            <li>
-                <a href="#">Username</a>
-                <ul class="dropdown">
+            <li class="user-menu">
+                <a href="javascript:void(0)"><?= htmlspecialchars($username) ?></a>
+                <ul class="mobile-dropdown">
                     <li><a href="user_dashboard.php">Profile</a></li>
-                    <li><a href="#">Logout</a></li>
+                    <li><a href="logout.php">Logout</a></li>
                 </ul>
             </li>
         </ul>
     </nav>
-    
+
     <!-- Mobile Menu -->
     <ul class="mobile-menu" id="mobileMenu">
         <li><a href="#">Cari Lowongan</a></li>
         <li><a href="user_company_list.php">Cari Perusahaan</a></li>
         <li><a href="user_community.php">Komunitas</a></li>
-        <li id="mobileUserMenu">
-            <a href="javascript:void(0)">Username</a>
+        <li class="user-menu">
+            <a href="javascript:void(0)"><?= htmlspecialchars($username) ?></a>
             <ul class="mobile-dropdown">
                 <li><a href="user_dashboard.php">Profile</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="logout.php">Logout</a></li>
             </ul>
         </li>
     </ul>
@@ -492,7 +544,7 @@ $result = mysqli_query($conn, $query);
             <h1 class="search-title">Kerjakini</h1>
             <p class="search-subtitle">Temukan pekerjaan impianmu dengan mudah dan cepat</p>
             <div class="search-container">
-                <input type="text" class="search-input" placeholder="Masukan Kata kunci...">
+                <input type="text" class="search-input" placeholder="Masukan Kata kunci..." />
                 <select class="search-select">
                     <option>Semua Klasifikasi</option>
                     <option value="">IT & Software</option>
@@ -512,54 +564,50 @@ $result = mysqli_query($conn, $query);
     </section>
 
     <!-- Jobs List -->
-     <section class="list-job container">
-        <?php while ($row = mysqli_fetch_assoc($result)) : ?>
-        <a href="user_aply.php?id=<?= $row['id'] ?>" style="text-decoration: none;">
-            <div class="job">
-                <h2><?= htmlspecialchars($row['judul_pekerjaan'])?></h2> <!-- htmlspecialchars() gunanya buat menghindasi xss-->
-                <p><?= htmlspecialchars($row['nama_perusahaan'])?></p>
-                <p>lokasi: <?= htmlspecialchars($row['lokasi'])?></p>
-                <p>Gaji: <?= number_format($row['gaji'], 0, ',', '.')?></p>
-                <p>Deskripsi: <?= nl2br(htmlspecialchars($row['deskripsi']))?></p>
-                <p>Syarat: <?= nl2br(htmlspecialchars($row['syarat']))?></p>
-            </div>
-        </a>
-        <?php endwhile; ?>
-     </section>
+    <section class="list-job container">
+        <?php if (mysqli_num_rows($result) > 0): ?>
+            <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+                <a href="user_aply.php?id=<?= $row['id'] ?>" style="text-decoration: none;">
+                    <div class="job">
+                        <h2><?= htmlspecialchars($row['judul_pekerjaan']) ?></h2>
+                        <p><?= htmlspecialchars($row['nama_perusahaan']) ?></p>
+                        <p>Lokasi: <?= htmlspecialchars($row['lokasi']) ?></p>
+                        <p>Gaji: Rp <?= number_format($row['gaji'], 0, ',', '.') ?></p>
+                        <p>Deskripsi: <?= nl2br(htmlspecialchars($row['deskripsi'])) ?></p>
+                        <p>Syarat: <?= nl2br(htmlspecialchars($row['syarat'])) ?></p>
+                    </div>
+                </a>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p>Tidak ada lowongan pekerjaan yang tersedia saat ini.</p>
+        <?php endif; ?>
+    </section>
 
     <script>
-        // Mobile Menu Toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
-        const mobileUserMenu = document.getElementById('mobileUserMenu');
-        
-        mobileMenuBtn.addEventListener('click', function() {
+
+        // Ambil semua user-menu
+        const userMenus = document.querySelectorAll('.user-menu');
+
+        userMenus.forEach(menu => {
+            const dropdown = menu.querySelector('.mobile-dropdown');
+
+            menu.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+
+            // Tutup dropdown saat klik di luar
+            document.addEventListener('click', function () {
+                dropdown.classList.remove('show');
+            });
+        });
+
+        mobileMenuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('active');
-            
-            // Change icon based on menu state
-            if (mobileMenu.classList.contains('active')) {
-                this.textContent = '✕';
-            } else {
-                this.textContent = '☰';
-            }
         });
-        
-        // Mobile Dropdown Toggle
-        mobileUserMenu.addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!mobileMenu.contains(event.target) && event.target !== mobileMenuBtn) {
-                mobileMenu.classList.remove('active');
-                mobileMenuBtn.textContent = '☰';
-            }
-            
-            if (!mobileUserMenu.contains(event.target)) {
-                mobileUserMenu.classList.remove('active');
-            }
-        });
-    </script>
+</script>
+
 </body>
 </html>

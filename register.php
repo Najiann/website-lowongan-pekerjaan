@@ -1,6 +1,30 @@
 <?php
+require 'koneksi.php'; 
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username         = htmlspecialchars($_POST['username']);
+    $email            = htmlspecialchars($_POST['email']);
+    $password         = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+    $role             = $_POST['role'];
+
+    if ($password !== $confirm_password) {
+        $error = "Konfirmasi sandi tidak cocok!";
+    } else {
+        $query = "INSERT INTO users (username, email, password, role) 
+                  VALUES ('$username', '$email', '$password', '$role')";
+        $result = mysqli_query($conn, $query);
+
+        if ($result) {
+            header("Location: login.php");
+            exit;
+        } else {
+            $error = "Gagal daftar: " . mysqli_error($conn);
+        }
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -214,6 +238,24 @@
                 padding: 1.5rem;
             }
         }
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: white;
+            color: var(--text-dark);
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+        }
+
     </style>
 </head>
 
@@ -253,6 +295,15 @@
             <div class="form-group">
                 <label for="confirm_password">Konfirmasi Kata Sandi</label>
                 <input type="password" name="confirm_password" id="confirm_password" placeholder="Ulangi kata sandi" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Daftar sebagai</label>
+                <select name="role" id="role" required>
+                    <option value="">-- Pilih Role --</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Applicant">Applicant</option>
+                    <option value="Company">Company</option>
+                </select>
             </div>
             <button type="submit" class="btn">Daftar Sekarang</button>
         </form>
