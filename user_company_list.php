@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // ambil data job ama nama perusahaanya
-$query = "SELECT DISTINCT job_vacancies.*, companies.nama_perusahaan, companies.logo
+$query = "SELECT DISTINCT job_vacancies.*, companies.id as company_id, companies.nama_perusahaan, companies.logo
           FROM job_vacancies
           JOIN companies ON job_vacancies.company_id = companies.id";
 
@@ -599,7 +599,7 @@ $result = mysqli_query($conn, $query);
             <div class="company-info">
                 <h3><?= htmlspecialchars($row['nama_perusahaan'])?></h3>
                 <p><?= nl2br(htmlspecialchars($row['deskripsi']))?></p>
-                <a href="user_company_view.php" class="apply-button">Lihat Lebih Lengkap</a>
+                <a href="user_company_view.php?company_id=<?= $row['id'] ?>" class="apply-button">Lihat Lebih Lengkap</a>
             </div>
         </div>
         <?php endwhile; ?>

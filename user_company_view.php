@@ -8,10 +8,15 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+if (!isset($_GET['company_id'])) {
+    echo "ID perusahaan tidak ditemukan.";
+    exit;
+}
 
-// Ambil data perusahaan berdasarkan user_id
-$queryCompany = mysqli_query($conn, "SELECT * FROM companies WHERE user_id = $user_id");
+$company_id = intval($_GET['company_id']);
+
+// Ambil data perusahaan berdasarkan ID
+$queryCompany = mysqli_query($conn, "SELECT * FROM companies WHERE id = $company_id");
 $company = mysqli_fetch_assoc($queryCompany);
 
 if (!$company) {
@@ -19,13 +24,21 @@ if (!$company) {
     exit;
 }
 
-$company_id = $company['id'];
+// Validasi data perusahaan
+$company = array_map(function($value) {
+    return $value ?? ''; // Mengubah null menjadi string kosong
+}, $company);
+
+$company_id = $company['id']; // Ini ID perusahaan yang benar
 
 // Ambil semua lowongan kerja berdasarkan company_id
 $queryJobs = mysqli_query($conn, "SELECT * FROM job_vacancies WHERE company_id = $company_id");
-
-
+if (!$queryJobs) {
+    echo "Error: " . mysqli_error($conn);
+    exit;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -527,8 +540,8 @@ $queryJobs = mysqli_query($conn, "SELECT * FROM job_vacancies WHERE company_id =
             <div class="company-profileall">
                 <h1>Profile Perusahaan</h1>
                 <div class="header-company">
-                    <img src="<?= htmlspecialchars($row['logo'] ?? 'images/default_logo.png') ?>" alt="Logo <?= htmlspecialchars($row['nama_perusahaan']) ?>">
-                    <h1><?= htmlspecialchars($company['name']) ?></h1>
+                    <img src="<?= !empty($company['logo']) ? htmlspecialchars($company['logo']) : 'images/default_logo.png' ?>" alt="Logo <?= htmlspecialchars($company['nama_perusahaan']) ?>">
+                    <h1><?= htmlspecialchars($company['nama_perusahaan']) ?></h1>
                 </div>
                 <div class="body-company">
                     <div class="company-detail">
@@ -541,7 +554,7 @@ $queryJobs = mysqli_query($conn, "SELECT * FROM job_vacancies WHERE company_id =
                             </div>
                             <div class="detail-content">
                                 <h3>Email Perusahaan</h3>
-                                <p><?= htmlspecialchars($company['email']) ?></p>
+                                <p><?= htmlspecialchars($company['email_perusahaan']) ?></p>
                             </div>
                         </div>
                         <div class="detail-item">
@@ -552,7 +565,7 @@ $queryJobs = mysqli_query($conn, "SELECT * FROM job_vacancies WHERE company_id =
                             </div>
                             <div class="detail-content">
                                 <h3>Nomor Telepon</h3>
-                                <p><?= htmlspecialchars($company['phone']) ?></p>
+                                <p><?= htmlspecialchars($company['no_telp']) ?></p>
                             </div>
                         </div>
                         <div class="detail-item">
@@ -564,29 +577,30 @@ $queryJobs = mysqli_query($conn, "SELECT * FROM job_vacancies WHERE company_id =
                             </div>
                             <div class="detail-content">
                                 <h3>Alamat Perusahaan</h3>
-                                <p><?= htmlspecialchars($company['address']) ?></p>
+                                <p><?= htmlspecialchars($company['alamat']) ?></p>
                             </div>
                         </div>
                 </div>
                 
                 <div class="company-description">
-                    <p><?= nl2br(htmlspecialchars($company['description'])) ?></p>
+                    <p><?= nl2br(htmlspecialchars($company['deskripsi'])) ?></p>
                 </div>
             </div>
         </div>
         <div class="joball">
             <h1>Ada Loker Nihh!!!</h1>
-            <?php while ($job = mysqli_fetch_assoc($query_jobs)): ?>
-            <div class="information-job">
-                <h2><?= htmlspecialchars($job['title']) ?></h2>
-                <p>Lokasi:</strong> <?= htmlspecialchars($job['location']) ?></p>
-                <p><strong>Gaji:</strong> Rp. <?= number_format($job['salary'], 0, ',', '.') ?></p>
-                <p><?= nl2br(htmlspecialchars($job['description'])) ?></p>
-            </div>
-        <?php endwhile; ?>
-        <?php if (mysqli_num_rows($query_jobs) == 0): ?>
-            <p><em>Belum ada lowongan dari perusahaan ini.</em></p>
-        <?php endif; ?>
+            <?php if ($queryJobs && mysqli_num_rows($queryJobs) > 0): ?>
+                <?php while ($job = mysqli_fetch_assoc($queryJobs)): ?>
+                    <div class="information-job">
+                        <h2><?= htmlspecialchars($job['judul_pekerjaan']) ?></h2>
+                        <p>Lokasi: <?= htmlspecialchars($job['lokasi']) ?></p>
+                        <p><strong>Gaji:</strong> Rp. <?= number_format($job['gaji'], 0, ',', '.') ?></p>
+                        <p><?= nl2br(htmlspecialchars($job['deskripsi'])) ?></p>
+                    </div>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p><em>Belum ada lowongan dari perusahaan ini.</em></p>
+            <?php endif; ?>
         </div>
     </section>
 

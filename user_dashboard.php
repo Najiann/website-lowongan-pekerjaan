@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $update->close();
         } else {
             // Insert
-            $insert = $conn->prepare("INSERT INTO social_media (applicants_id, linkedin, instagram) VALUES (?, ?, ?)");
+            $insert = $conn->prepare("INSERT INTO social_media (applicant_id, linkedin, instagram) VALUES (?, ?, ?)");
             $insert->bind_param("iss", $applicants_id, $linkedin, $instagram);
             if (!$insert->execute()) {
                 echo "Error insert sosial media: " . $insert->error;
