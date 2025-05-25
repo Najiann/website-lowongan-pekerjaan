@@ -2,36 +2,50 @@
 session_start();
 include 'koneksi.php';
 
+$error = '';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
 
-    // Cari user berdasarkan email dan password biasa
-    $query = $conn->query("SELECT * FROM users WHERE email='$email' AND password='$password'");
-    $user = $query->fetch_assoc();
+    if (empty($email) || empty($password)) {
+        $error = "Email dan password wajib diisi!";
+    } else {
+        // Gunakan prepared statement untuk keamanan
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
+        $stmt->bind_param("ss", $email, $password); // asumsinya password belum di-hash
 
-    if ($user) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['email'] = $user['email'];
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
 
-        // Cek role dan redirect
-        if ($user['role'] === 'Admin') {
-            header("Location: dashadmn.php"); // Pastikan file ini ADA dan NAMANYA BENAR
-        } else if (in_array($user['role'], ['user', 'User', 'Applicant'])) {
-            header("Location: users_home.php");
-        } else if (in_array($user['role'], ['Company', 'Perusahaan'])) {
-            header("Location: company_dashboard.php"); // Kalau ada dashboard untuk perusahaan
+        if ($user) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['role'] = $user['role'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['name'] = $user['name'];
+
+            // Redirect berdasarkan role
+            if ($user['role'] === 'Admin') {
+                header("Location: dashadmn.php");
+            } else if (in_array($user['role'], ['user', 'User', 'Applicant'])) {
+                header("Location: users_home.php");
+            } else if (in_array($user['role'], ['Company', 'Perusahaan'])) {
+                header("Location: company_dashboard.php");
+            } else {
+                $error = "Peran tidak dikenali.";
+            }
+            exit();
         } else {
-            header("Location: login.php");
+            $error = "Email atau kata sandi salah!";
         }
 
-        exit;
-    } else {
-        $error = "Email atau kata sandi salah!";
+        $stmt->close();
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -256,7 +270,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="login-container">
         <a href="#" class="logo">
             <span class="logo-icon">K</span>
-            <span>erjakini</span>
+            <span>kerjakini</span>
         </a>
         
         <h3>Masuk ke Akun Anda</h3>

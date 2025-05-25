@@ -2,12 +2,17 @@
 include "koneksi.php";
 session_start();
 
-// Cek session login
+if (!isset($_SESSION['username'])) {
+    header('Location: login.php');
+    exit;
+}
+
 if (!isset($_SESSION['user_id'])) {
     echo "Session user tidak ditemukan. Silakan login terlebih dahulu.";
     exit;
 }
 
+$username = $_SESSION['username'];
 $user_id = $_SESSION['user_id'];
 
 // Ambil data user
@@ -302,6 +307,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             height: 4px;
             background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
             border-radius: 2px;
+        }
+        .user-menu {
+            position: relative;
+        }
+
+        .mobile-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            min-width: 160px;
+            padding: 8px 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .mobile-dropdown.show {
+            display: block;
+        }
+
+        .mobile-dropdown li {
+            list-style: none;
+        }
+
+        .mobile-dropdown li a {
+            display: block;
+            padding: 10px 16px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        .mobile-dropdown li a:hover {
+            background-color: #f2f2f2;
+            color: #000;
         }
         
         /* User Info Card */
@@ -760,9 +805,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <li><a href="users_home.php">Cari Lowongan</a></li>
             <li><a href="user_company_list.php">Cari Perusahaan</a></li>
             <li><a href="user_community.php">Komunitas</a></li>
-            <li>
-                <a href="#">Username</a>
-                <ul class="dropdown">
+            <li class="user-menu">
+                <a href="javascript:void(0)"><?= htmlspecialchars($username) ?></a>
+                <ul class="mobile-dropdown">
                     <li><a href="user_dashboard.php">Profile</a></li>
                     <li><a href="logout.php">Logout</a></li>
                 </ul>
@@ -775,8 +820,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <li><a href="users_home.php">Cari Lowongan</a></li>
         <li><a href="user_company_list.php">Cari Perusahaan</a></li>
         <li><a href="user_community.php">Komunitas</a></li>
-        <li id="mobileUserMenu">
-            <a href="javascript:void(0)">Username</a>
+        <li class="user-menu">
+            <a href="javascript:void(0)"><?= htmlspecialchars($username) ?></a>
             <ul class="mobile-dropdown">
                 <li><a href="user_dashboard.php">Profile</a></li>
                 <li><a href="logout.php">Logout</a></li>
@@ -930,11 +975,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         });
         
-        // Mobile Dropdown Toggle
-        mobileUserMenu.addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-        
         // Close menu when clicking outside
         document.addEventListener('click', function(event) {
             if (!mobileMenu.contains(event.target) && event.target !== mobileMenuBtn) {
@@ -1000,6 +1040,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             const event = new Event('change');
             fileInput.dispatchEvent(event);
         }
+
+        const userMenus = document.querySelectorAll('.user-menu');
+
+        userMenus.forEach(menu => {
+            const dropdown = menu.querySelector('.mobile-dropdown');
+
+            menu.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+
+            // Tutup dropdown saat klik di luar
+            document.addEventListener('click', function () {
+                dropdown.classList.remove('show');
+            });
+        });
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
     </script>
 </body>
 </html>
