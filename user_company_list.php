@@ -3,11 +3,16 @@ include 'koneksi.php';
 session_start();
 
 // Cek session login
+if (!isset($_SESSION['username'])) {
+    header('Location: login.php');
+    exit;
+}
 if (!isset($_SESSION['user_id'])) {
     echo "Session user tidak ditemukan. Silakan login terlebih dahulu.";
     exit;
 }
 
+$username = $_SESSION['username'];
 // ambil data job ama nama perusahaanya
 $query = "SELECT DISTINCT job_vacancies.*, companies.id as company_id, companies.nama_perusahaan, companies.logo
           FROM job_vacancies
@@ -550,7 +555,7 @@ $result = mysqli_query($conn, $query);
             <li><a href="#">Cari Perusahaan</a></li>
             <li><a href="user_community.php">Komunitas</a></li>
             <li>
-                <a href="#">Username</a>
+                <a href="javascript:void(0)"><?= htmlspecialchars($username) ?></a>
                 <ul class="dropdown">
                     <li><a href="user_dashboard.php">Profile</a></li>
                     <li><a href="#">Logout</a></li>

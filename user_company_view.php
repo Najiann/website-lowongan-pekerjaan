@@ -3,7 +3,7 @@ include "koneksi.php";
 session_start();
 
 // Cek session login
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['username'])) {
     echo "Session user tidak ditemukan. Silakan login terlebih dahulu.";
     exit;
 }
@@ -13,6 +13,7 @@ if (!isset($_GET['company_id'])) {
     exit;
 }
 
+$username = $_SESSION['username'];
 $company_id = intval($_GET['company_id']);
 
 // Ambil data perusahaan berdasarkan ID
@@ -512,7 +513,7 @@ if (!$queryJobs) {
             <li><a href="user_company_list.php">Cari Perusahaan</a></li>
             <li><a href="user_community.php">Komunitas</a></li>
             <li>
-                <a href="#">Username</a>
+                <a href="javascript:void(0)"><?= htmlspecialchars($username) ?></a>
                 <ul class="dropdown">
                     <li><a href="user_dashboard.php">Profile</a></li>
                     <li><a href="logout.php">Logout</a></li>

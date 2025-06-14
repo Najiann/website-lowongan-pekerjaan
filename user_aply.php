@@ -3,7 +3,7 @@ include "koneksi.php";
 session_start();
 
 // Cek session login
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['username'])) {
     echo "Session user tidak ditemukan. Silakan login terlebih dahulu.";
     exit;
 }
@@ -14,6 +14,8 @@ if (!isset($_GET['id'])) {
     echo "ID pekerjaan tidak ditemukan.";
     exit;
 }
+
+$username = $_SESSION['username'];
 
 $job_id = intval($_GET['id']); // Amankan input
 
@@ -512,7 +514,7 @@ $applicant = mysqli_fetch_assoc($result_applicant);
             <li><a href="user_company_list.php">Cari Perusahaan</a></li>
             <li><a href="user_community.php">Komunitas</a></li>
             <li>
-                <a href="#"><?= $user_data['username']; ?></a>
+                <a href="javascript:void(0)"><?= htmlspecialchars($username) ?></a>
                 <ul class="dropdown">
                     <li><a href="user_dashboard.php">Profile</a></li>
                     <li><a href="logout.php">Logout</a></li>

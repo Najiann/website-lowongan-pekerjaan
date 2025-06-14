@@ -486,22 +486,22 @@
             <h2 class="section-title">Rekomendasi Perusahaan</h2>
             <div class="company-grid">
                 <div class="company-card">
-                    <img src="navtan.jpg" alt="Navtan Animation" class="company-logo">
+                    <img src="images/navtan.jpg" alt="Navtan Animation" class="company-logo">
                     <div class="company-name">Navtan Animation</div>
                     <div class="job-count">79 Pekerjaan</div>
                 </div>
                 <div class="company-card">
-                    <img src="jax.jpg" alt="JaxMediaTama" class="company-logo">
+                    <img src="images/jax.jpg" alt="JaxMediaTama" class="company-logo">
                     <div class="company-name">JaxMediaTama</div>
                     <div class="job-count">19 Pekerjaan</div>
                 </div>
                 <div class="company-card">
-                    <img src="maven.jpg" alt="Maven Company" class="company-logo">
+                    <img src="images/maven.jpg" alt="Maven Company" class="company-logo">
                     <div class="company-name">Maven Company</div>
                     <div class="job-count">9 Pekerjaan</div>
                 </div>
                 <div class="company-card">
-                    <img src="joy.jpg" alt="JoyBoy Company" class="company-logo">
+                    <img src="images/joy.jpg" alt="JoyBoy Company" class="company-logo">
                     <div class="company-name">JoyBoy Company</div>
                     <div class="job-count">32 Pekerjaan</div>
                 </div>
